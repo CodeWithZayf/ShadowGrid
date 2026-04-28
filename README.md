@@ -129,7 +129,3 @@ Use any MJPEG-compatible source (IP Webcam app, RTSP cameras, etc).
 | `POST` | `/suspects/description` | Add suspect from text |
 | `DELETE` | `/suspects/{id}` | Remove suspect |
 | `GET` | `/occurrences` | List occurrences |
-
-## License
-
-This project is licensed under the MIT License.
