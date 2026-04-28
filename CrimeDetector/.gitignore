@@ -1,0 +1,86 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# ── Virtual environments ───────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# ── Distribution / packaging ───────────────────────────────────────────────────
+dist/
+build/
+*.egg-info/
+*.egg
+MANIFEST
+
+# ── PyTorch / model weights ────────────────────────────────────────────────────
+# Do NOT commit model weights to the repo — they are large binary files.
+# Use releases, DVC, or a shared drive to distribute them.
+model_weights/*.pt
+model_weights/*.pth
+model_weights/*.bin
+model_weights/*.onnx
+*.pt
+
+# ── Ultralytics cache ──────────────────────────────────────────────────────────
+runs/
+ultralytics/
+
+# ── Test and coverage ─────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+*.coveragerc
+
+# ── Type checking ─────────────────────────────────────────────────────────────
+.mypy_cache/
+.pytype/
+
+# ── IDE and editor ────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Environment variables ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── OpenCV tile / cache ────────────────────────────────────────────────────────
+*.cache
+
+# ── torchreid build artefacts ─────────────────────────────────────────────────
+deep-person-reid/
+torchreid.egg-info/
+
+# ── OS artefacts ──────────────────────────────────────────────────────────────
+.DS_Store
+desktop.ini
+
+# ── Camera config (contains internal IPs) ────────────────────────────────────
+cameras.json
+!cameras.json.example
+
+# extras
+*.zip
+
+# Dataset
+Dataset/

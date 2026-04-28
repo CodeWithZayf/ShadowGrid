@@ -1,0 +1,29 @@
+[
+  {
+    "id": "cam_01",
+    "url": "http://<CAMERA_IP_1>:8080/video",
+    "metadata": {
+      "location_name": "Camera 1",
+      "latitude": 22.5726,
+      "longitude": 88.3639
+    }
+  },
+  {
+    "id": "cam_02",
+    "url": "http://<CAMERA_IP_2>:8080/video",
+    "metadata": {
+      "location_name": "Camera 2",
+      "latitude": 22.5600,
+      "longitude": 88.3500
+    }
+  },
+  {
+    "id": "cam_03",
+    "url": "http://<CAMERA_IP_3>:8080/video",
+    "metadata": {
+      "location_name": "Camera 3",
+      "latitude": 22.5500,
+      "longitude": 88.3400
+    }
+  }
+]

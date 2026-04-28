@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SENTINEL // AI Surveillance Console</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ░░ SCANLINE OVERLAY ░░ -->
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="noise-overlay" aria-hidden="true"></div>
+
+  <!-- ░░ HEADER ░░ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mark">
+        <span class="logo-bracket">[</span>
+        <span class="logo-text">SENTINEL</span>
+        <span class="logo-bracket">]</span>
+      </div>
+      <div class="logo-sub">AI SURVEILLANCE CONSOLE v1.0</div>
+    </div>
+    <div class="topbar-center">
+      <div class="server-input-group">
+        <label class="input-label" for="serverUrl">SERVER</label>
+        <input type="text" id="serverUrl" class="server-input" value="http://localhost:8000" spellcheck="false" />
+        <button id="connectBtn" class="btn btn-connect">CONNECT</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="status-cluster">
+        <div class="status-dot-wrap">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-label" id="statusLabel">OFFLINE</span>
+        </div>
+        <div class="stat-chip"><span class="stat-num" id="hCams">0</span><span class="stat-lbl">CAMS</span></div>
+        <div class="stat-chip"><span class="stat-num" id="hSuspects">0</span><span class="stat-lbl">SUSPECTS</span></div>
+        <div class="stat-chip"><span class="stat-num" id="hOccurrences">0</span><span class="stat-lbl">HITS</span></div>
+        <div class="clock" id="clock">00:00:00</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ░░ NAV TABS ░░ -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="cameras">
+      <span class="tab-icon">⬡</span> CAMERAS
+    </button>
+    <button class="tab-btn" data-tab="suspects">
+      <span class="tab-icon">◈</span> SUSPECTS
+    </button>
+    <button class="tab-btn" data-tab="occurrences">
+      <span class="tab-icon">◉</span> OCCURRENCES
+    </button>
+    <button class="tab-btn" data-tab="health">
+      <span class="tab-icon">⬘</span> SYSTEM
+    </button>
+  </nav>
+
+  <!-- ░░ TOAST NOTIFICATIONS ░░ -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- ░░ MAIN CONTENT ░░ -->
+  <main class="main-content">
+
+    <!-- ══════════════════ TAB: CAMERAS ══════════════════ -->
+    <section class="tab-panel active" id="tab-cameras">
+
+      <div class="panel-toolbar">
+        <h2 class="panel-title">CAMERA NETWORK</h2>
+        <div class="toolbar-actions">
+          <button class="btn btn-secondary" id="refreshCamerasBtn">↺ REFRESH</button>
+        </div>
+      </div>
+
+      <!-- Camera grid -->
+      <div class="camera-grid" id="cameraGrid">
+        <div class="empty-state" id="cameraEmpty">
+          <div class="empty-icon">⬡</div>
+          <div class="empty-text">No cameras registered.<br/>Connect to the server to begin.</div>
+        </div>
+      </div>
+
+      <!-- Camera detail modal-like side panel -->
+      <div class="cam-detail-overlay hidden" id="camDetailOverlay">
+        <div class="cam-detail-panel">
+          <div class="cam-detail-header">
+            <span class="cam-detail-id" id="detailCamId">—</span>
+            <button class="close-btn" id="closeCamDetail">✕</button>
+          </div>
+          <div class="cam-detail-body">
+            <div class="stream-wrap">
+              <img id="liveStreamImg" class="live-stream-img" src="" alt="Live stream" />
+              <div class="stream-badge">● LIVE</div>
+            </div>
+            <div class="cam-meta-grid" id="camMetaGrid"></div>
+            <div class="cam-detail-actions">
+              <button class="btn btn-danger" id="removeCamSuspectsBtn">
+                ✕ REMOVE CAMERA SUSPECTS
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════ TAB: SUSPECTS ══════════════════ -->
+    <section class="tab-panel" id="tab-suspects">
+
+      <div class="panel-toolbar">
+        <h2 class="panel-title">SUSPECTS REGISTRY</h2>
+        <div class="toolbar-actions">
+          <button class="btn btn-secondary" id="refreshSuspectsBtn">↺ REFRESH</button>
+          <button class="btn btn-accent" id="openAddSuspectBtn">+ ADD SUSPECT</button>
+        </div>
+      </div>
+
+      <!-- Add suspect form panel -->
+      <div class="add-suspect-panel hidden" id="addSuspectPanel">
+        <div class="asp-header">
+          <span>ADD SUSPECT</span>
+          <button class="close-btn" id="closeAddSuspectBtn">✕</button>
+        </div>
+        <div class="asp-body">
+          <div class="asp-tabs">
+            <button class="asp-tab active" data-aspmode="image">FROM IMAGE</button>
+            <button class="asp-tab" data-aspmode="description">FROM DESCRIPTION</button>
+          </div>
+
+          <!-- Image upload mode -->
+          <div class="asp-mode" id="aspMode-image">
+            <div class="upload-zone" id="uploadZone">
+              <div class="upload-icon">⊕</div>
+              <div class="upload-text">DROP IMAGE HERE<br/><small>or click to browse</small></div>
+              <input type="file" id="suspectImageFile" accept="image/*" class="upload-input" />
+            </div>
+            <img id="uploadPreview" class="upload-preview hidden" src="" alt="Preview" />
+            <div class="form-row">
+              <label class="input-label">CAMERA ID (optional)</label>
+              <input type="text" id="imgCameraId" class="form-input" placeholder="e.g. cam_01" />
+            </div>
+            <div class="form-row">
+              <label class="input-label">DESCRIPTION (optional)</label>
+              <input type="text" id="imgDescription" class="form-input" placeholder="e.g. Red sedan, partial plate MH12" />
+            </div>
+            <button class="btn btn-accent full-width" id="submitImageSuspect">SUBMIT &amp; EMBED</button>
+          </div>
+
+          <!-- Description mode -->
+          <div class="asp-mode hidden" id="aspMode-description">
+            <div class="form-row">
+              <label class="input-label">VEHICLE DESCRIPTION *</label>
+              <textarea id="descText" class="form-textarea" rows="4" placeholder="Describe the suspect vehicle in detail…"></textarea>
+            </div>
+            <div class="form-row">
+              <label class="input-label">CAMERA ID (optional)</label>
+              <input type="text" id="descCameraId" class="form-input" placeholder="e.g. cam_01" />
+            </div>
+            <button class="btn btn-accent full-width" id="submitDescSuspect">SUBMIT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Suspects table -->
+      <div class="data-table-wrap">
+        <div class="empty-state hidden" id="suspectsEmpty">
+          <div class="empty-icon">◈</div>
+          <div class="empty-text">No suspects in registry.</div>
+        </div>
+        <table class="data-table" id="suspectsTable">
+          <thead>
+            <tr>
+              <th>SUSPECT ID</th>
+              <th>CAMERA</th>
+              <th>CAR ID</th>
+              <th>SOURCE</th>
+              <th>TIMESTAMP</th>
+              <th>DESCRIPTION</th>
+              <th>EMBEDDING</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody id="suspectsBody"></tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════ TAB: OCCURRENCES ══════════════════ -->
+    <section class="tab-panel" id="tab-occurrences">
+
+      <div class="panel-toolbar">
+        <h2 class="panel-title">OCCURRENCE LOG</h2>
+        <div class="toolbar-actions">
+          <div class="filter-group">
+            <label class="input-label">FILTER BY</label>
+            <select class="form-select" id="occFilterType">
+              <option value="all">ALL</option>
+              <option value="suspect">SUSPECT ID</option>
+              <option value="camera">CAMERA ID</option>
+            </select>
+            <input type="text" id="occFilterValue" class="form-input narrow" placeholder="ID value…" />
+            <button class="btn btn-secondary" id="applyOccFilter">APPLY</button>
+            <button class="btn btn-ghost" id="clearOccFilter">CLEAR</button>
+          </div>
+          <button class="btn btn-secondary" id="refreshOccurrencesBtn">↺ REFRESH</button>
+        </div>
+      </div>
+
+      <div class="data-table-wrap">
+        <div class="empty-state hidden" id="occurrencesEmpty">
+          <div class="empty-icon">◉</div>
+          <div class="empty-text">No occurrences recorded yet.</div>
+        </div>
+        <table class="data-table" id="occurrencesTable">
+          <thead>
+            <tr>
+              <th>OCCURRENCE ID</th>
+              <th>SUSPECT ID</th>
+              <th>CAMERA</th>
+              <th>CAR ID</th>
+              <th>SIMILARITY</th>
+              <th>TIMESTAMP</th>
+              <th>EMBEDDING</th>
+            </tr>
+          </thead>
+          <tbody id="occurrencesBody"></tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════ TAB: HEALTH ══════════════════ -->
+    <section class="tab-panel" id="tab-health">
+
+      <div class="panel-toolbar">
+        <h2 class="panel-title">SYSTEM DIAGNOSTICS</h2>
+        <div class="toolbar-actions">
+          <button class="btn btn-secondary" id="refreshHealthBtn">↺ REFRESH</button>
+        </div>
+      </div>
+
+      <div class="health-grid">
+
+        <!-- System status card -->
+        <div class="health-card wide">
+          <div class="health-card-title">SERVER STATUS</div>
+          <div class="health-status-row" id="healthStatusRow">
+            <div class="health-stat">
+              <span class="hs-val" id="hs-status">—</span>
+              <span class="hs-lbl">STATUS</span>
+            </div>
+            <div class="health-stat">
+              <span class="hs-val" id="hs-cams">—</span>
+              <span class="hs-lbl">CAMERAS</span>
+            </div>
+            <div class="health-stat">
+              <span class="hs-val" id="hs-suspects">—</span>
+              <span class="hs-lbl">SUSPECTS</span>
+            </div>
+            <div class="health-stat">
+              <span class="hs-val" id="hs-occurrences">—</span>
+              <span class="hs-lbl">OCCURRENCES</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Queue depths card -->
+        <div class="health-card">
+          <div class="health-card-title">FRAME QUEUE DEPTHS</div>
+          <div id="queueBarsWrap" class="queue-bars-wrap">
+            <div class="empty-mini">No data yet.</div>
+          </div>
+        </div>
+
+        <!-- Raw JSON card -->
+        <div class="health-card">
+          <div class="health-card-title">RAW HEALTH RESPONSE</div>
+          <pre class="raw-json" id="healthRawJson">—</pre>
+        </div>
+
+        <!-- Endpoint tester -->
+        <div class="health-card wide">
+          <div class="health-card-title">ENDPOINT TESTER</div>
+          <div class="endpoint-tester">
+            <div class="et-row">
+              <select class="form-select" id="etMethod">
+                <option>GET</option>
+                <option>POST</option>
+                <option>DELETE</option>
+              </select>
+              <input type="text" id="etPath" class="form-input" placeholder="/health" value="/health" />
+              <button class="btn btn-accent" id="etSendBtn">SEND</button>
+            </div>
+            <div class="et-meta-row">
+              <label class="input-label">BODY (JSON, optional)</label>
+              <textarea id="etBody" class="form-textarea mono" rows="3" placeholder='{"key": "value"}'></textarea>
+            </div>
+            <div class="et-response">
+              <div class="et-response-header">
+                <span>RESPONSE</span>
+                <span class="et-status-badge" id="etStatusBadge">—</span>
+              </div>
+              <pre class="raw-json" id="etResponseBody">Send a request to see the response.</pre>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ░░ EMBEDDING MODAL ░░ -->
+  <div class="modal-overlay hidden" id="embeddingModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span>EMBEDDING VECTOR</span>
+        <button class="close-btn" id="closeEmbeddingModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="embed-meta" id="embedMeta"></div>
+        <canvas id="embedChart" width="600" height="120"></canvas>
+        <div class="embed-stats" id="embedStats"></div>
+        <details class="embed-raw-wrap">
+          <summary>RAW VALUES</summary>
+          <pre class="embed-raw" id="embedRaw"></pre>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# ── Web framework ──────────────────────────────────────────────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9          # required for File/Form uploads in FastAPI
+
+# ── Computer vision ────────────────────────────────────────────────────────────
+opencv-python-headless>=4.9.0    # cv2 without GUI deps (server environment)
+ultralytics>=8.2.0               # YOLOv8 person + crime detection
+
+# ── Person tracking ───────────────────────────────────────────────────────────
+deep-sort-realtime>=1.3.2        # DeepSORT multi-object tracker
+
+# ── Deep learning ──────────────────────────────────────────────────────────────
+torch>=2.2.0
+torchvision>=0.17.0
+
+# ── Re-ID (optional but recommended) ─────────────────────────────────────────
+# torchreid provides OSNet; install from source if pip version is stale:
+#   pip install git+https://github.com/KaiyangZhou/deep-person-reid.git
+torchreid
+
+# ── Numerics ──────────────────────────────────────────────────────────────────
+numpy>=1.26.0
+
+# ── ML Evaluation ─────────────────────────────────────────────────────────────
+scikit-learn>=1.4.0               # AUC, precision-recall, confusion matrix
